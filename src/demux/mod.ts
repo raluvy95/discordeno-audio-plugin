@@ -1,10 +1,23 @@
-import { WebmBaseDemuxer } from "./prism.js";
+const workerUrl = new URL("./demux-worker.ts", import.meta.url).href;
 
 export async function* demux(source: AsyncIterable<Uint8Array>) {
-  const demuxer = new WebmBaseDemuxer();
-  for await (const value of source) {
-    for await (const demuxed of demuxer.demux(value)) {
-      yield demuxed;
+  const worker = new Worker(workerUrl, {
+    type: "module",
+  });
+  try {
+    for await (const value of source) {
+      const nextValue = new Promise<Uint8Array[]>((resolve) => {
+        worker.onmessage = (e) => {
+          resolve(e.data);
+        };
+      });
+      worker.postMessage(value);
+      for (const demuxed of await nextValue) {
+        yield demuxed;
+      }
     }
+  } catch (error) {
+    console.error(error);
   }
+  worker.terminate();
 }
