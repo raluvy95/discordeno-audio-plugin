@@ -1,7 +1,12 @@
-import { YouTube, ytDownload } from "../../deps.ts";
+import { YouTube, ytDownload, Video  } from "../../deps.ts";
 import { bufferIter } from "../../utils/mod.ts";
 import { demux } from "../demux/mod.ts";
 import { createAudioSource, empty } from "./audio-source.ts";
+
+function isYoutubeURL(query: string) {
+  const matchedReg = /http(s)?:\/\/(www.)?youtu(be.com\/watch\?v=|.be\/)/g
+  return query.match(matchedReg) != null
+}
 
 export async function getYoutubeSources(...queries: string[]) {
   const sources = queries.map((query) => getYoutubeSource(query));
@@ -13,7 +18,12 @@ export async function getYoutubeSources(...queries: string[]) {
 
 export async function getYoutubeSource(query: string) {
   try {
-    const results = await YouTube.search(query, { limit: 1, type: "video" });
+    let results: Video[];
+    if(!isYoutubeURL(query)) {
+      results = await YouTube.search(query, { limit: 1, type: "video" });
+    } else {
+      results = [await YouTube.getVideo(query)]
+    }
     if (results.length > 0) {
       const { id, title } = results[0];
       return createAudioSource(title!, async () => {
