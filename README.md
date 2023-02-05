@@ -1,4 +1,6 @@
-# Discordeno Audio Plugin
+# Jolly Music Plugin
+
+A fork of Discordeno Audio Plugin to fit in [the Jolly project](https://github.com/raluvy95/jolly)
 
 This plugin enables your bot to send and receive audio.
 Play either local files or stream straight from YouTube using [ytdl-core](https://github.com/DjDeveloperr/ytdl_core).
