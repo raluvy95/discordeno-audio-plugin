@@ -1,5 +1,5 @@
 import { VoiceOpcodes } from "../../deps.ts";
-import { setDriftlessTimeout } from "npm:driftless";
+// import { setDriftlessTimeout } from "npm:driftless";
 
 function createHeartBeat(time: number) {
   return JSON.stringify({
@@ -24,9 +24,9 @@ export function sendHeart(ws: WebSocket, interval: number) {
     const heartbeat = createHeartBeat(timestamp);
     last = Date.now();
     ws.send(heartbeat);
-    setDriftlessTimeout(repeatBeat, interval + (last - Date.now()));
+    setTimeout(repeatBeat, interval + (last - Date.now()));
   };
-  setDriftlessTimeout(repeatBeat, interval + (last - Date.now()));
+  setTimeout(repeatBeat, interval + (last - Date.now()));
   return () => {
     done = true;
   };

@@ -2,7 +2,7 @@ import { EventSource } from "../../utils/mod.ts";
 import { ConnectionData } from "../connection-data.ts";
 import { FRAME_DURATION } from "../sample-consts.ts";
 import { Player } from "./types.ts";
-import { setDriftlessInterval, clearDriftless } from "npm:driftless";
+// import { setDriftlessInterval, clearDriftless } from "npm:driftless";
 
 export class RawPlayer implements Player {
   #audio?: AsyncIterableIterator<Uint8Array>;
@@ -36,9 +36,9 @@ export class RawPlayer implements Player {
     }
     this.playing = true;
 
-    const inter = setDriftlessInterval(async () => {
+    const inter = setInterval(async () => {
       if (this.playing === false) {
-        clearDriftless(inter);
+        clearInterval(inter);
       }
       if (this.#interrupt) {
         const { done, value } = await this.#interrupt.next();
