@@ -1,0 +1,5 @@
+{
+    "tasks": {
+        "check": "deno run -A --check mod.ts"
+    }
+}
